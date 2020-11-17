@@ -11,7 +11,7 @@ def set_ap(ssid, password):
     my_socket.bind(('', 8889))
     cmd_str = 'command'
     print ('sending command %s' % cmd_str)
-    my_socket.sendto(cmd_str.encode('utf-8'), ('192.168.10.1', 8889))
+    my_socket.sendto(cmd_str.encode('utf-8'), ('192.168.10.1', 8889))     
     response, ip = my_socket.recvfrom(100)
     print('from %s: %s' % (ip, response))
 
