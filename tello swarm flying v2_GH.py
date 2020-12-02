@@ -7,42 +7,42 @@ correct_ip
 #각각 ip작성
 
 while True:   
-68     try:  
-69         if keyboard.is_pressed('w'): 
-70             wpressed == True 
-71             while wpressed == True: 
-72                 print("forward") 
-73                 forward() 
-74         elif keyboard.is_pressed('s'): 
-75             spressed = True 
-76             while spressed == True: 
-77                 print("backward") 
-78                 back() 
-79         elif keyboard.is_pressed('z'): 
-80             print('up 20') 
-81             up() 
-82         elif keyboard.is_pressed('x'): 
-83             print('down 20') 
-84             down() 
-85         elif keyboard.is_pressed('d'): 
-86             print('cw 5') 
-87             cw() 
-88         elif keyboard.is_pressed('a'): 
-89             print('ccw 5') 
-90             ccw() 
-91         elif keyboard.is_pressed('t'): 
-92             print('takeoff') 
-93             takeoff() 
-94         elif keyboard.is_pressed('l'): 
-95             print('land') 
-96             land() 
-97         elif keyboard.is_pressed('c'): 
-98             print('command') 
-99             start() 
-100         else: 
-101             pass 
-102     except: 
-103         break 
+     try:  
+         if keyboard.is_pressed('w'): 
+             wpressed == True 
+             while wpressed == True: 
+                 print("forward") 
+                 forward() 
+         elif keyboard.is_pressed('s'): 
+             spressed = True 
+             while spressed == True: 
+                 print("backward") 
+                 back() 
+         elif keyboard.is_pressed('z'): 
+             print('up 20') 
+             up() 
+         elif keyboard.is_pressed('x'): 
+             print('down 20') 
+             down() 
+         elif keyboard.is_pressed('d'): 
+             print('cw 5') 
+             cw() 
+         elif keyboard.is_pressed('a'): 
+             print('ccw 5') 
+             ccw() 
+         elif keyboard.is_pressed('t'): 
+             print('takeoff') 
+             takeoff() 
+         elif keyboard.is_pressed('l'): 
+             print('land') 
+             land() 
+         elif keyboard.is_pressed('c'): 
+             print('command') 
+             start() 
+         else: 
+             pass 
+     except: 
+         break 
 
 
 
