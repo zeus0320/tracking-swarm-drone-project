@@ -17,4 +17,4 @@ def set_ap(ssid, password):    #set_ap 지정
     print('from %s: %s' % (ip, response))
 
 
-set_ap('Tello_Nest', 'tellotello')  #연결하고자 하는 네트워크 이름과 비번 작성
+set_ap('Gun', 'gunhee9946.')  #연결하고자 하는 네트워크 이름과 비번 작성
