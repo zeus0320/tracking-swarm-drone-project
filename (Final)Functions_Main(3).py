@@ -82,3 +82,76 @@ def display(img):
     cv2.line(img, (0,int(frameHeight / 2) - deadZone), (frameWidth,int(frameHeight / 2) - deadZone), (255, 255, 0), 3)
     cv2.line(img, (0, int(frameHeight / 2) + deadZone), (frameWidth, int(frameHeight / 2) + deadZone), (255, 255, 0), 3)
 
+    
+    
+while True:
+
+    # 텔로 영상을 받아서 처리하는 과정
+    frame_read = me.get_frame_read()
+    myFrame = frame_read.frame
+    img = cv2.resize(myFrame, (width, height))
+    imgContour = img.copy()
+    imgHsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)       # BGR을 HSV 모드로 전환
+
+    # Trackbar 값을 받아와서 각 변수에 저장
+    h_min = cv2.getTrackbarPos("HUE Min","HSV")
+    h_max = cv2.getTrackbarPos("HUE Max", "HSV")
+    s_min = cv2.getTrackbarPos("SAT Min", "HSV")
+    s_max = cv2.getTrackbarPos("SAT Max", "HSV")
+    v_min = cv2.getTrackbarPos("VALUE Min", "HSV")
+    v_max = cv2.getTrackbarPos("VALUE Max", "HSV")
+
+    # HSV에서 BGR로 가정할 범위를 정의함
+    lower = np.array([h_min,s_min,v_min])
+    upper = np.array([h_max,s_max,v_max])
+
+    # imgHsv에서 lower와 upper 사이에 해당하는 값은 그대로, 나머지 부분 = 0으로 mask에 전달
+    mask = cv2.inRange(imgHsv,lower,upper)
+
+    result = cv2.bitwise_and(img,img, mask = mask)          # mask와 원본 img 이미지를 비트 연산
+    mask = cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR)           # mask를 GRAY 이미지에서 BGR 모드로 전환
+
+    # imgContour 물체 탐지 이미지 생성
+    imgBlur = cv2.GaussianBlur(result, (7, 7), 1)                # GaussianBlur 라이브러리 - 이미지 노이즈 제거
+    imgGray = cv2.cvtColor(imgBlur, cv2.COLOR_BGR2GRAY)          # 노이즈 제거된 이미지를 GRAY 이미지로 변환
+    threshold1 = cv2.getTrackbarPos("Threshold1", "Parameters")  # Parameters Trackbar 결과값을 변수에 각각 저장
+    threshold2 = cv2.getTrackbarPos("Threshold2", "Parameters")
+    imgCanny = cv2.Canny(imgGray, threshold1, threshold2)        # Canny Edge Detect - 엣지 검출
+    kernel = np.ones((5, 5))                                     # 1로 가득찬 5x5 shape matrix kernel 생성
+    imgDil = cv2.dilate(imgCanny, kernel, iterations=1)          # imgCanny 이미지 dilate(팽창) 작업 1회 반복
+    getContours(imgDil, imgContour)                              # getContours 함수에 dilated Canny 이미지와 원본 이미지 대입
+    display(imgContour)                                          # display 함수에 imgContour 대입 = 이미지 경계선, 중앙점
+
+    # Tello Flight
+    if startCounter == 0:
+       me.takeoff()
+       startCounter = 1
+
+    # getContours 함수에서 영역 별 검출 반응 후 Tello의 움직임 설정
+    if dir == 1:
+       me.yaw_velocity = -30
+    elif dir == 2:
+       me.yaw_velocity = 30
+    elif dir == 3:
+       me.up_down_velocity= 10; me.for_back_velocity = 30
+    elif dir == 4:
+       me.up_down_velocity= -10; me.for_back_velocity = -30
+    else:
+       me.left_right_velocity = 0; me.for_back_velocity = 0; me.up_down_velocity = 0; me.yaw_velocity = 0
+
+    # Tello 에 속도값을 보냄
+    if me.send_rc_control:
+       me.send_rc_control(me.left_right_velocity, me.for_back_velocity, me.up_down_velocity, me.yaw_velocity)
+    print(dir)
+
+    # Tello 실시간 카메라 영상을 컴퓨터 화면에 배열 - stackImages 함수 사용
+    stack = stackImages(0.7, ([img, result], [imgDil, imgContour]))
+    cv2.imshow('Horizontal Stacking', stack)
+
+    # 키보드 q를 누를 시 Tello 착륙 후 루프에서 벗어남
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        me.land()
+        break
+
+# 열린 창을 모두 닫음
+cv2.destroyAllWindows()
