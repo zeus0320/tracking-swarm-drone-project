@@ -21,10 +21,10 @@ class Swarm(object):
             '192.168.3.103': 1,
         }
 
-    def start(drones):             # 군집 비행 메인 루프, 위에서 작성한 틀 실행
+    def start(drones):             # 군집 비행 메인 루프, 위에서 작성한 틀 바탕
 
 
-        def is_invalid_command(command):     #커멘드 오류 설정
+        def is_invalid_command(command):     #커멘드 기본 설정
             if command is None:
                 return True
             c = command.strip()
